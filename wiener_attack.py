@@ -1,7 +1,14 @@
 #!/usr/bin/env python3
 """
-Wiener Attack on RSA
+Wiener Attack on RSA-256
 This attack works when the private exponent d is small (d < N^0.25)
+
+For a 256-bit modulus N, the attack succeeds when:
+- d < N^0.25 ≈ 2^64 (approximately 64 bits)
+- More precisely: d < (1/3) * N^0.25 for guaranteed success
+
+The attack uses continued fractions to find convergents of e/N,
+which reveal the private exponent when d is sufficiently small.
 """
 
 from fractions import Fraction
@@ -125,24 +132,28 @@ def test_wiener_attack():
     # Generate a vulnerable key (for testing)
     # For Wiener attack to work: d < (1/3) * N^(1/4)
 
-    # Use larger primes for RSA-256 bit equivalent
-    p = 12553
-    q = 13007
-    n = p * q  # 163296871
-    phi = (p - 1) * (q - 1)  # 163271312
+    # Use 128-bit primes for RSA-256 (256-bit modulus)
+    # These are actual 128-bit primes
+    p = 212344570752130260581265344513834653917  # 128-bit prime
+    q = 268549803116678939420286259815450725913  # 128-bit prime
+    n = p * q  # 256-bit modulus
+    phi = (p - 1) * (q - 1)
 
     # Choose very small d (vulnerable to Wiener attack)
+    # For 256-bit N, N^0.25 ≈ 2^64, so d should be much smaller
     # Must be coprime to phi
-    d = 101
+    d = 1234567890123  # ~40 bits, much less than N^0.25
 
     # Calculate e
     # e*d ≡ 1 (mod phi)
     e = pow(d, -1, phi)
 
-    print(f"Testing Wiener Attack")
+    print(f"Testing Wiener Attack (RSA-256)")
     print(f"n = {n}")
+    print(f"n bit length = {n.bit_length()} bits")
     print(f"e = {e}")
     print(f"Actual d = {d}")
+    print(f"d bit length = {d.bit_length()} bits")
     print(f"Bound check: d < N^0.25 = {int(n**0.25)}")
     print()
 
