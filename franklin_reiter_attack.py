@@ -307,16 +307,17 @@ def franklin_reiter_attack(c1: int, c2: int, n: int, e: int, a: int, b: int) -> 
             return None
 
         m1 = (-a0 * a1_inv) % n
-
+        m2 = (a * m1 + b) % n
         print(f"  Linear GCD: {a1}*x + {a0}")
         print(f"  Root: x = -{a0} * {a1}^(-1) mod {n}")
         print(f"  M1 = {m1}")
+        print(f"  M2 = {m2}")
         print()
 
         # Verify
         print("Step 4: Verification")
         c1_check = pow(m1, e, n)
-        m2 = (a * m1 + b) % n
+        
         c2_check = pow(m2, e, n)
 
         print(f"  M1 = {m1}")
