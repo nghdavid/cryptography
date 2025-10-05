@@ -351,7 +351,6 @@ def franklin_reiter_attack(c1: int, c2: int, n: int, e: int, a: int, b: int) -> 
         print("  ❌ Cannot extract M1 from high-degree GCD")
         return None
 
-
 def test_franklin_reiter():
     """Test Franklin-Reiter attack with examples"""
 
@@ -410,125 +409,8 @@ def test_franklin_reiter():
         print(f"   Expected: {m1}")
         print(f"   Got: {recovered_m1}")
 
-
-def test_known_prefix_attack():
-    """Test attack when messages share a known prefix"""
-
-    print("\n" + "=" * 70)
-    print("KNOWN PREFIX ATTACK (Special Case)")
-    print("=" * 70)
-    print()
-
-    print("Scenario: Two messages with known difference")
-    print()
-
-    # RSA parameters
-    p, q = 1009, 1013
-    n = p * q
-    e = 3
-
-    # Simple numeric messages with known difference
-    m1 = 100
-    difference = 50
-    m2 = m1 + difference
-
-    # Linear relation
-    a = 1
-    b = difference
-
-    print(f"Messages:")
-    print(f"  M1 = {m1}")
-    print(f"  M2 = {m2}")
-    print(f"  Relation: M2 = M1 + {b}")
-    print()
-
-    # Encrypt
-    c1 = pow(m1, e, n)
-    c2 = pow(m2, e, n)
-
-    print(f"Attacker knows:")
-    print(f"  - The difference: {difference}")
-    print(f"  - C1 = {c1}")
-    print(f"  - C2 = {c2}")
-    print(f"  - Relation: a={a}, b={b}")
-    print()
-    print("-" * 70)
-    print()
-
-    # Attack
-    recovered_m1 = franklin_reiter_attack(c1, c2, n, e, a, b)
-
-    if recovered_m1 == m1:
-        print()
-        print("=" * 70)
-        print(f"✅ SUCCESS!")
-        print(f"   Original M1: {m1}")
-        print(f"   Recovered M1: {recovered_m1}")
-        print(f"   M2 = {recovered_m1} + {b} = {recovered_m1 + b}")
-        print("=" * 70)
-    else:
-        print(f"❌ FAILED")
-
-
-def test_text_messages():
-    """Test with short text messages"""
-
-    print("\n" + "=" * 70)
-    print("TEXT MESSAGE ATTACK")
-    print("=" * 70)
-    print()
-
-    # RSA parameters (larger)
-    p, q = 12553, 12569
-    n = p * q
-    e = 3
-
-    # Short text messages that fit in the modulus
-    msg1_text = "Hi"
-    msg2_text = "Ho"
-
-    m1 = int.from_bytes(msg1_text.encode(), 'big')
-    m2 = int.from_bytes(msg2_text.encode(), 'big')
-
-    # Linear relation
-    a = 1
-    b = (m2 - m1) % n
-
-    print(f"Messages:")
-    print(f"  M1 = '{msg1_text}' → {m1}")
-    print(f"  M2 = '{msg2_text}' → {m2}")
-    print(f"  Relation: M2 = M1 + {b}")
-    print()
-
-    # Encrypt
-    c1 = pow(m1, e, n)
-    c2 = pow(m2, e, n)
-
-    print(f"Encrypted:")
-    print(f"  C1 = {c1}")
-    print(f"  C2 = {c2}")
-    print()
-    print("-" * 70)
-    print()
-
-    # Attack
-    recovered_m1 = franklin_reiter_attack(c1, c2, n, e, a, b)
-
-    if recovered_m1 == m1:
-        print()
-        print("=" * 70)
-        # Convert back to text
-        recovered_bytes = recovered_m1.to_bytes((recovered_m1.bit_length() + 7) // 8, 'big')
-        recovered_text = recovered_bytes.decode('utf-8')
-
-        print(f"✅ Recovered message: '{recovered_text}'")
-        print("=" * 70)
-
-
 if __name__ == "__main__":
     test_franklin_reiter()
-    test_known_prefix_attack()
-    test_text_messages()
 
     print("\n" + "=" * 70)
     print("USAGE")
